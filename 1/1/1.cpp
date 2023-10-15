@@ -1,6 +1,5 @@
 ﻿
 
-
 #include <iostream>
 #include <thread>
 #include <queue>
@@ -10,46 +9,66 @@
 #include <functional>
 #include <future>
 #include <atomic>
+#include "thread_pool.h"
+#include "safe_queue.h"
 
 using namespace std::chrono_literals;
 
+
 std::mutex m;
-std::queue<std::function<void()>> work_queue;
-std::vector<std::thread> VecThread;
-
-std::atomic<bool> flag_done{ false };
-
 void func1() {
-	std::this_thread::sleep_for(200ms);
+	std::this_thread::sleep_for(500ms);
 	std::lock_guard l(m);
 	std::cout << "Working " << __FUNCTION__ << "...\n";
 }
 
 void func2() {
-	std::this_thread::sleep_for(200ms);
+	std::this_thread::sleep_for(100ms);
 	std::lock_guard l(m);
 	std::cout << "Working " << __FUNCTION__ << "...\n";
 }
 
-void addF1() {
-	for (int i = 0; i < 5; ++i)
-	{
-		std::this_thread::sleep_for(500ms);
-		std::lock_guard l(m);
-		work_queue.push(func1);
-	}
+
+int main()
+{
+	thread_pool tp1;
+	thread_pool tp2;
+	tp1.submit(func1);
+	tp2.submit(func2);
+
+	return 0;
 }
 
-void addF2() {
-	for (int i = 0; i < 5; ++i)
-	{
-		std::this_thread::sleep_for(1s);
-		std::lock_guard l(m);
-		work_queue.push(func2);
-	}
-	flag_done = true;
-}
 
+
+//
+//std::queue<std::function<void()>> work_queue;
+//std::vector<std::thread> VecThread;
+//
+//std::atomic<bool> flag_done{ false };
+//
+//
+//void addF1() {
+//	for (int i = 0; i < 5; ++i)
+//	{
+//		std::this_thread::sleep_for(500ms);
+//		std::lock_guard l(m);
+//		work_queue.push(func1);
+//	}
+//}
+//
+//void addF2() {
+//	for (int i = 0; i < 5; ++i)
+//	{
+//		std::this_thread::sleep_for(1s);
+//		std::lock_guard l(m);
+//		work_queue.push(func2);
+//	}
+//	flag_done = true;
+//}
+//
+
+/*
 void work() {
 	m.lock();
 	std::cout << "Start working id: " << std::this_thread::get_id() << std::endl;
@@ -69,8 +88,10 @@ void work() {
 		work_queue.pop();
 	}
 }
+*/
 
-int main()
+/*
+int main_01()
 {
 	const auto cores = std::thread::hardware_concurrency();
 	std::cout << "Cores# " << cores << std::endl;
@@ -90,3 +111,4 @@ int main()
 	th2.join();
 	return 0;
 }
+*/
