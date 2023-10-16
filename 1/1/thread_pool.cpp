@@ -15,20 +15,20 @@ void thread_pool::work(void)
 		if (!s.pop()) std::this_thread::yield();
 		lk.unlock();
 	}
+
 	while (!s.empty()) {
 		s.pop();
 	}
+	std::cout << "out of work" << std::endl;
 }
 
 
 void thread_pool::submit(std::function<void()> f)
 {
-	for (int i = 0; i < 5; ++i)
-	{
-		std::this_thread::sleep_for(200ms);
+
 		s.push(f);
 		data_cond.notify_all();
-	}
+	
 
-	flag_done = true;
+//	flag_done = true;
 }

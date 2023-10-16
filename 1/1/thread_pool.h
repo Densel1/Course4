@@ -31,6 +31,11 @@ public:
 		}
 	}
 
+	void setFlagDone()
+	{
+		flag_done = true;
+	}
+
 	void work(void);
 
 
