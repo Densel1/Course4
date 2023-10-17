@@ -11,24 +11,16 @@ void thread_pool::work(void)
 	while (!flag_done)
 	{
 		std::unique_lock lk(m);
-		data_cond.wait(lk, [&]() {return !s.empty(); });
+		data_cond.wait_for(lk, std::chrono::milliseconds(1700));
 		if (!s.pop()) std::this_thread::yield();
 		lk.unlock();
 	}
-
-	while (!s.empty()) {
-		s.pop();
-	}
-	std::cout << "out of work" << std::endl;
 }
 
 
 void thread_pool::submit(std::function<void()> f)
 {
-
+	std::this_thread::sleep_for(100ms);
 		s.push(f);
 		data_cond.notify_all();
-	
-
-//	flag_done = true;
 }

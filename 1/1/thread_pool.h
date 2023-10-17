@@ -43,9 +43,14 @@ public:
 
 	~thread_pool()
 	{
+
+		flag_done = true;
 		for (auto& el : v)
 		{
-			if(el.joinable()) el.join();
+			if(el.joinable()) 
+			{
+				el.join();
+			}
 		}
 	}
 };
